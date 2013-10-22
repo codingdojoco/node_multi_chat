@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script type="text/javascript" src="http:////ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://getbootstrap.com/2.3.2/assets/css/bootstrap.css">
+
+    <script>
+    $(document).ready(function(){
+    	$('#name').focus();
+    });
+    </script>
+  </head>
+  <body>
+
+  	<div id="login" class="container">
+	    <h1>Welcome!</h1>
+	    <form action="/login" method="post">
+	    	<input type="text" id="name" name="name" placeholder="Your Name" />
+	    	<br /><select name="room">
+	    		<option>Room 1</option>
+	    		<option>Room 2</option>
+	    		<option>Room 3</option>
+	    		<option>Room 4</option>
+	    	</select>
+	    	<br /><input type="submit" value="Enter" class='btn btn-primary' />
+	    </form>
+	</div>
+    
+  </body>
+</html>

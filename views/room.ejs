@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <p>Welcome <%= my_name %></p>
+
+    <h1>List of Users</h1>
+
+    <% for(session in conversations) { %>
+    <h2>Name:<%= conversations[session].name %></h2>
+    <h2>Message: <%= conversations[session].message %></h2>
+    <% } %>
+
+
+    <h2>Type a new message</h2>
+    <form action="/new_message" method="post">
+      <textarea name="message" /></textarea>
+      <input type="submit" />
+    </form>
+
+  </body>
+</html>
