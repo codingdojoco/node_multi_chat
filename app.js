@@ -16,7 +16,7 @@ var myApp = {
 app.set('users')
 
 // all environments
-app.set('port', process.env.PORT || 5000);
+app.set('port', process.env.PORT || 80);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(express.favicon());
@@ -80,4 +80,4 @@ io.sockets.on('connection', function (socket){
   socket.emit('update_messages', myApp.conversations);
 });
 
-server.listen(5000);
+server.listen(80);
