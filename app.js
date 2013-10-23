@@ -3,20 +3,17 @@ var routes = require('./routes');
 var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
-var app = express(),
-    store  = new express.session.MemoryStore;
+var app = express();
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 
 var myApp = {
 	conversations: {},
-	session_id: 0
 }
 
 app.set('users')
 
 // all environments
-app.set('port', process.env.PORT || 80);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(express.favicon());
@@ -25,10 +22,7 @@ app.use(express.bodyParser());
 app.use(express.methodOverride());
 
 app.use(express.cookieParser());
-app.use(express.session({
-  store: store,
-  secret: '1234567890QWERTY'
-}))
+app.use(express.session({ secret: '1234567890QWERTY' }));
 app.use(app.router);
 
 app.use(require('less-middleware')({ src: path.join(__dirname, 'public') }));
@@ -80,4 +74,4 @@ io.sockets.on('connection', function (socket){
   socket.emit('update_messages', myApp.conversations);
 });
 
-server.listen(80);
+server.listen(process.env.PORT || 8080);
