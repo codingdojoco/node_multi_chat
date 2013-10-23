@@ -45,6 +45,10 @@
         var player = data[key];
         var html_id = document.getElementById(key);
 
+        //if a player's coordinate is not available go no further
+        if(typeof player.x === 'undefined')
+          break;
+
         //see if we already rendered the player, if not insert the html elements
         if(html_id == null)
         {
