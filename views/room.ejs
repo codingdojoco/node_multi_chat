@@ -1,25 +1,121 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= title %></title>
+    <title>Multiplayer Ninja Game</title>
+    <script type="text/javascript" src="javascripts/jquery.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://getbootstrap.com/2.3.2/assets/css/bootstrap.css">
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+    var socket = io.connect('http://localhost:5000')
+  
+    //storing my global variables in a single variable to avoid potential conflicts
+    var myConst = { x: 250, y: 100, direction: "down", step: 1 };
+
+    $(document).ready(function(){
+
+      //have the message box focused
+      $('#message').focus();
+
+      //whenever a user changes the message, submit the form via Ajax
+      $('#message').on("keyup", function(e){
+        $('#message_form').submit();
+      });
+
+      //ajax form submission
+      $('#message_form').submit(function(){
+        $('#form_x').val(myConst.x); 
+        $('#form_y').val(myConst.y); 
+        $('#form_direction').val(myConst.direction); 
+        $('#form_step').val(myConst.step); 
+
+        var form = $('#message_form');
+        $.post(form.attr('action'), form.serialize());
+        return false;
+      });
+
+      $('#message_form').submit();
+
+    });
+
+    //update the players coordinates as well as the message
+    socket.on('update_messages', function(data){
+      for(key in data)
+      {
+        var player = data[key];
+        var html_id = document.getElementById(key);
+
+        //see if we already rendered the player, if not insert the html elements
+        if(html_id == null)
+        {
+          $('#room').append('<div id="'+key+'" class="character" style="position:absolute; top:'+player.y+'px; left:'+player.x+'px; width:40px;"><div class="message">'+player.message+'</div><div class="name">'+player.name+'</div><img src="images/'+player.direction+player.step+'.png" style="width:40px;" /></div>');
+        }
+        //if we already have the html element of the player, update the html content  
+        else
+        {
+          $('#'+key).css({left: player.x+"px", top: player.y+"px"});
+          $('#'+key+' img').attr('src', 'images/'+player.direction+player.step+'.png');
+          $('#'+key+' .message').show().html(player.message);
+        }
+
+        // console.log(player);
+        //if the player has no message, hide the message box
+        if(player.message.length == 0)
+          $('#'+key+' .message').hide();
+        
+      }
+    })
+
+    function alternateStep(){
+      myConst.step = myConst.step==1? 2:1;  //have step alternate between 2 and 1
+    }
+
+    document.onkeydown = function(e)
+    {
+      if(e.keyCode == 13) //left arrow
+      {
+        //put the focus back on the message
+        //always have the type cursor to be at the end
+        $('#message').val($('#message').val()).focus();
+      }
+      else if(e.keyCode == 37) //left arrow
+      {
+        myConst.x = myConst.x-9; myConst.direction="left"; alternateStep();
+      }
+      else if(e.keyCode == 39) //right arrow
+      {
+        myConst.x = myConst.x+9; myConst.direction="right"; alternateStep();
+      }
+      else if(e.keyCode == 38)  //top arrow
+      {
+        myConst.y = myConst.y-9; myConst.direction="top"; alternateStep();
+      }
+      else if(e.keyCode == 40)  //down arrow
+      {
+        myConst.y = myConst.y+9; myConst.direction="down"; alternateStep();
+      }
+
+      $('#message_form').submit();
+    }
+
+    </script>
+
   </head>
   <body>
-    <p>Welcome <%= my_name %></p>
 
-    <h1>List of Users</h1>
+    <div id="room">
+    
+    </div>
 
-    <% for(session in conversations) { %>
-    <h2>Name:<%= conversations[session].name %></h2>
-    <h2>Message: <%= conversations[session].message %></h2>
-    <% } %>
-
-
-    <h2>Type a new message</h2>
-    <form action="/new_message" method="post">
-      <textarea name="message" /></textarea>
-      <input type="submit" />
+    <form id="message_form" action="/update_info" method="post">
+      Message: <input type="text" id="message" autocomplete='off' name="message" value="" />
+      <input type="hidden" id="form_x" name="x" />
+      <input type="hidden" id="form_y" name="y" />
+      <input type="hidden" id="form_direction" name="direction" />
+      <input type="hidden" id="form_step" name="step" />
     </form>
+    <p>Press Enter to type a message. Once done, press enter again to have the character move.</p>
 
+    <p><a href="/">Go back</a></p>
   </body>
 </html>
