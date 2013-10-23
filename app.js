@@ -68,6 +68,12 @@ app.post('/update_info', function(req, res){
   res.send('updated');
 });
 
+//refer to https://devcenter.heroku.com/articles/node-websockets
+io.configure(function () { 
+  io.set("transports", ["xhr-polling"]); 
+  io.set("polling duration", 10); 
+});
+
 //listening to connection event
 io.sockets.on('connection', function (socket){
   //broadcast the updated conversations to the clients
